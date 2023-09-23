@@ -1,6 +1,7 @@
 import imgDevice from 'assets/images/device.avif';
 import DevicesList from './DevicesList/DevicesList';
 import { Component } from 'react';
+import DeviceForm from './DeviceForm/DeviceForm';
 
 const devices = [
   {
@@ -88,6 +89,7 @@ const devices = [
 export class App extends Component {
   state = {
     devices: devices,
+    filter: '',
   };
 
   onDeleteDevice = id => {
@@ -96,12 +98,43 @@ export class App extends Component {
     });
   };
 
+  onAddDevice = data => {
+    if (this.state.devices.some(({ title }) => data.title === title))
+      return alert('This device have alredy been added');
+    console.log(data);
+    const newDevice = {
+      ...data,
+      coverImage: imgDevice,
+      id: new Date().getMilliseconds(),
+    };
+    this.setState({ devices: [...this.state.devices, newDevice] });
+  };
+
+  onIputChange = event => {
+    this.setState({ filter: event.target.value });
+  };
+
   render() {
+    const filteredDevices = this.state.devices.filter(device =>
+      device.title
+        .toLowerCase()
+        .includes(this.state.filter.toLowerCase().trim())
+    );
     return (
       <div>
         <h1>Devices store</h1>
+        <DeviceForm onAddDevice={this.onAddDevice} />
+        <label>
+          <p>Search by title</p>
+          <input
+            type="text"
+            placeholder="Enter search title"
+            value={this.state.filter}
+            onChange={this.onIputChange}
+          />
+        </label>
         <DevicesList
-          devices={this.state.devices}
+          devices={filteredDevices}
           onDeleteDevice={this.onDeleteDevice}
         />
       </div>
