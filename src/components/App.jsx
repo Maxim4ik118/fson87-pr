@@ -2,6 +2,7 @@ import imgDevice from 'assets/images/device.avif';
 import DevicesList from './DevicesList/DevicesList';
 import { useState } from 'react';
 import DeviceForm from './DeviceForm/DeviceForm';
+import Modal from './Modal/Modal';
 
 const devicesData = [
   {
@@ -99,13 +100,32 @@ const devicesData = [
 export function App() {
   const [devices, setDevices] = useState(devicesData);
   const [filter, setFilter] = useState('');
+  const [modal, setModal] = useState({
+    isOpen: false,
+    modalData: null,
+  });
+
+  const onOpenModal = (modalData) => {
+    setModal({
+      isOpen: true,
+      modalData: modalData,
+    });
+  }
+
+  const onCloseModal = () => { 
+    setModal({
+      isOpen: false,
+    modalData: null
+    })
+  }
+
   const onDeleteDevice = id => {
     setDevices(devices.filter(device => device.id !== id));
   };
 
   const onAddDevice = data => {
     if (devices.some(({ title }) => data.title === title))
-      return alert('This device have alredy been added');
+      return alert('This device have already been added');
     console.log(data);
     const newDevice = {
       ...data,
@@ -116,9 +136,10 @@ export function App() {
     setDevices([...devices, newDevice]);
   };
 
-  const onIputChange = event => {
+  const onInputChange = event => {
     setFilter(event.target.value);
   };
+
   const toggleFavorite = id => {
     // console.log(id);
     setDevices(
@@ -133,9 +154,12 @@ export function App() {
       })
     );
   };
+
   const filteredDevices = devices.filter(device =>
     device.title.toLowerCase().includes(filter.toLowerCase().trim())
   );
+
+const sortedFilteredDevices = [...filteredDevices].sort((a, b) => b.isFavorite - a.isFavorite)
 
   return (
     <div>
@@ -147,14 +171,21 @@ export function App() {
           type="text"
           placeholder="Enter search title"
           value={filter}
-          onChange={onIputChange}
+          onChange={onInputChange}
         />
       </label>
       <DevicesList
-        devices={filteredDevices}
+        onOpenModal={ onOpenModal}
+        devices={sortedFilteredDevices}
         onDeleteDevice={onDeleteDevice}
         toggleFavorite={toggleFavorite}
+
       />
+      {modal.isOpen && <Modal
+        onCloseModal={onCloseModal}
+        modalData={modal.modalData}
+      />}
+
     </div>
   );
 }

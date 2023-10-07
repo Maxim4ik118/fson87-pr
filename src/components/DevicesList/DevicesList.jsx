@@ -1,6 +1,6 @@
 import DeviceCard from 'components/DeviceCard/DeviceCard';
 
-const DevicesList = ({ devices, onDeleteDevice, toggleFavorite }) => {
+const DevicesList = ({ devices, onDeleteDevice, toggleFavorite, onOpenModal }) => {
   return (
     <div>
       {devices.map(
@@ -16,6 +16,7 @@ const DevicesList = ({ devices, onDeleteDevice, toggleFavorite }) => {
             onDeleteDevice={onDeleteDevice}
             toggleFavorite={toggleFavorite}
             isFavorite={isFavorite}
+            onOpenModal={ onOpenModal}
           />
         )
       )}
