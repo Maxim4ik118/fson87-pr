@@ -1,78 +1,94 @@
-import { Component } from 'react';
+import { useState } from 'react';
 
-export default class DeviceForm extends Component {
-  state = {
-    title: '',
-    brand: '',
-    price: '',
-    type: '',
+export default function DeviceForm({ onAddDevice }) {
+  const [title, setTitle] = useState('');
+  const [brand, setBrand] = useState('');
+  const [price, setPrice] = useState('');
+  const [type, setType] = useState('');
+
+  const onChangeInputValue = event => {
+    const { name, value } = event.target;
+    switch (name) {
+      case 'title':
+        setTitle(value);
+        break;
+      case 'brand':
+        setBrand(value);
+        break;
+      case 'price':
+        setPrice(value);
+        break;
+      case 'type':
+        setType(value);
+        break;
+      default:
+        break;
+    }
   };
 
-  onChangeInputValue = event => {
-    this.setState({ [event.target.name]: event.target.value });
-  };
-
-  onFormSubmit = event => {
+  const onFormSubmit = event => {
     event.preventDefault();
+
     const data = {
-      title: this.state.title,
-      brand: this.state.brand,
-      price: this.state.price,
-      type: this.state.type,
+      title,
+      brand,
+      price,
+      type,
     };
-    this.props.onAddDevice(data);
-    this.setState({ title: '', brand: '', price: '', type: '' });
+    onAddDevice(data);
+
+    setTitle('');
+    setBrand('');
+    setPrice('');
+    setType('');
   };
 
-  render() {
-    const { title, brand, price, type } = this.state;
-    return (
-      <div>
-        <form onSubmit={this.onFormSubmit}>
-          <label>
-            <p>Title: </p>
-            <input
-              type="text"
-              name="title"
-              value={title}
-              onChange={this.onChangeInputValue}
-              required
-            />
-          </label>
-          <label>
-            <p>Brand: </p>
-            <input
-              type="text"
-              name="brand"
-              value={brand}
-              onChange={this.onChangeInputValue}
-              required
-            />
-          </label>
-          <label>
-            <p>Price: </p>
-            <input
-              type="text"
-              name="price"
-              value={price}
-              onChange={this.onChangeInputValue}
-              required
-            />
-          </label>
-          <label>
-            <p>Type: </p>
-            <input
-              type="text"
-              name="type"
-              value={type}
-              onChange={this.onChangeInputValue}
-              required
-            />
-          </label>
-          <br />
-          <button type="submit">Add device</button>
-        </form>
-      </div>
-    );
-  }
+  return (
+    <div>
+      <form onSubmit={onFormSubmit}>
+        <label>
+          <p>Title: </p>
+          <input
+            type="text"
+            name="title"
+            value={title}
+            onChange={onChangeInputValue}
+            required
+          />
+        </label>
+        <label>
+          <p>Brand: </p>
+          <input
+            type="text"
+            name="brand"
+            value={brand}
+            onChange={onChangeInputValue}
+            required
+          />
+        </label>
+        <label>
+          <p>Price: </p>
+          <input
+            type="text"
+            name="price"
+            value={price}
+            onChange={onChangeInputValue}
+            required
+          />
+        </label>
+        <label>
+          <p>Type: </p>
+          <input
+            type="text"
+            name="type"
+            value={type}
+            onChange={onChangeInputValue}
+            required
+          />
+        </label>
+        <br />
+        <button type="submit">Add device</button>
+      </form>
+    </div>
+  );
 }

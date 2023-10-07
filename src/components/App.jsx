@@ -1,9 +1,9 @@
 import imgDevice from 'assets/images/device.avif';
 import DevicesList from './DevicesList/DevicesList';
-import { Component } from 'react';
+import { useState } from 'react';
 import DeviceForm from './DeviceForm/DeviceForm';
 
-const devices = [
+const devicesData = [
   {
     id: 1,
     title: 'Smartphone',
@@ -11,6 +11,7 @@ const devices = [
     price: 999.99,
     type: 'Mobile',
     coverImage: imgDevice,
+    isFavorite: false,
   },
   {
     id: 2,
@@ -19,6 +20,7 @@ const devices = [
     price: 1299.99,
     type: 'Computer',
     coverImage: imgDevice,
+    isFavorite: true,
   },
   {
     id: 3,
@@ -27,6 +29,7 @@ const devices = [
     price: 249.99,
     type: 'Wearable',
     coverImage: imgDevice,
+    isFavorite: true,
   },
   {
     id: 4,
@@ -35,6 +38,7 @@ const devices = [
     price: 199.99,
     type: 'Mobile',
     coverImage: imgDevice,
+    isFavorite: false,
   },
   {
     id: 5,
@@ -43,6 +47,7 @@ const devices = [
     price: 799.99,
     type: 'Electronics',
     coverImage: imgDevice,
+    isFavorite: false,
   },
   {
     id: 6,
@@ -51,6 +56,7 @@ const devices = [
     price: 399.99,
     type: 'Gaming',
     coverImage: imgDevice,
+    isFavorite: false,
   },
   {
     id: 7,
@@ -59,6 +65,7 @@ const devices = [
     price: 599.99,
     type: 'Photography',
     coverImage: imgDevice,
+    isFavorite: false,
   },
   {
     id: 8,
@@ -67,6 +74,7 @@ const devices = [
     price: 149.99,
     type: 'Audio',
     coverImage: imgDevice,
+    isFavorite: false,
   },
   {
     id: 9,
@@ -75,6 +83,7 @@ const devices = [
     price: 79.99,
     type: 'Networking',
     coverImage: imgDevice,
+    isFavorite: false,
   },
   {
     id: 10,
@@ -83,23 +92,19 @@ const devices = [
     price: 79.99,
     type: 'Wearable',
     coverImage: imgDevice,
+    isFavorite: true,
   },
 ];
 
-export class App extends Component {
-  state = {
-    devices: devices,
-    filter: '',
+export function App() {
+  const [devices, setDevices] = useState(devicesData);
+  const [filter, setFilter] = useState('');
+  const onDeleteDevice = id => {
+    setDevices(devices.filter(device => device.id !== id));
   };
 
-  onDeleteDevice = id => {
-    this.setState({
-      devices: this.state.devices.filter(device => device.id !== id),
-    });
-  };
-
-  onAddDevice = data => {
-    if (this.state.devices.some(({ title }) => data.title === title))
+  const onAddDevice = data => {
+    if (devices.some(({ title }) => data.title === title))
       return alert('This device have alredy been added');
     console.log(data);
     const newDevice = {
@@ -107,37 +112,49 @@ export class App extends Component {
       coverImage: imgDevice,
       id: new Date().getMilliseconds(),
     };
-    this.setState({ devices: [...this.state.devices, newDevice] });
+
+    setDevices([...devices, newDevice]);
   };
 
-  onIputChange = event => {
-    this.setState({ filter: event.target.value });
+  const onIputChange = event => {
+    setFilter(event.target.value);
   };
-
-  render() {
-    const filteredDevices = this.state.devices.filter(device =>
-      device.title
-        .toLowerCase()
-        .includes(this.state.filter.toLowerCase().trim())
+  const toggleFavorite = id => {
+    // console.log(id);
+    setDevices(
+      devices.map(device => {
+        if (device.id === id) {
+          return {
+            ...device,
+            isFavorite: !device.isFavorite,
+          };
+        }
+        return device;
+      })
     );
-    return (
-      <div>
-        <h1>Devices store</h1>
-        <DeviceForm onAddDevice={this.onAddDevice} />
-        <label>
-          <p>Search by title</p>
-          <input
-            type="text"
-            placeholder="Enter search title"
-            value={this.state.filter}
-            onChange={this.onIputChange}
-          />
-        </label>
-        <DevicesList
-          devices={filteredDevices}
-          onDeleteDevice={this.onDeleteDevice}
+  };
+  const filteredDevices = devices.filter(device =>
+    device.title.toLowerCase().includes(filter.toLowerCase().trim())
+  );
+
+  return (
+    <div>
+      <h1>Devices store</h1>
+      <DeviceForm onAddDevice={onAddDevice} />
+      <label>
+        <p>Search by title</p>
+        <input
+          type="text"
+          placeholder="Enter search title"
+          value={filter}
+          onChange={onIputChange}
         />
-      </div>
-    );
-  }
+      </label>
+      <DevicesList
+        devices={filteredDevices}
+        onDeleteDevice={onDeleteDevice}
+        toggleFavorite={toggleFavorite}
+      />
+    </div>
+  );
 }
