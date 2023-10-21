@@ -1,5 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
 import imgDevice from 'assets/images/device.avif';
+import persistReducer from 'redux-persist/es/persistReducer';
+import storage from 'redux-persist/lib/storage';
+
 const devicesData = [
   {
     id: 1,
@@ -96,6 +99,7 @@ const devicesData = [
 const INITIAL_STATE = {
   devices: devicesData,
   filter: '',
+  isEditing: [],
 };
 
 const devicesSlice = createSlice({
@@ -121,14 +125,49 @@ const devicesSlice = createSlice({
             isFavorite: !device.isFavorite,
           };
         }
+
         return device;
       });
+    },
+
+    updateDevice(state, action) {
+      // action.payload -> {id: 2, title: "new title"}
+      // [{id: 1, title: 'hello'}, {id: 2, title: 'capa'}]
+      // [{id: 1, title: 'hello'}, {id: 2, title: "new title"}]
+      state.devices = state.devices.map(element => {
+        if (element.id === action.payload.id) {
+          return action.payload;
+        }
+        return element;
+      });
+    },
+    toggleEditingMode(state, action) {
+      state.isEditing.push(action.payload);
+    },
+    cancelEditingMode(state, action) {
+      state.isEditing = state.isEditing.filter(id => id !== action.payload);
     },
   },
 });
 
+const persistConfig = {
+  key: 'devices',
+  storage,
+  whitelist: ['devices'],
+};
+export const persistedReducer = persistReducer(
+  persistConfig,
+  devicesSlice.reducer
+);
+
 // Генератори екшенів
-export const { addDevice, deleteDevice, toggleFavouriteDevice } =
-  devicesSlice.actions;
+export const {
+  addDevice,
+  deleteDevice,
+  toggleFavouriteDevice,
+  updateDevice,
+  toggleEditingMode,
+  cancelEditingMode,
+} = devicesSlice.actions;
 // Редюсер слайсу
 export const deviceReducer = devicesSlice.reducer;

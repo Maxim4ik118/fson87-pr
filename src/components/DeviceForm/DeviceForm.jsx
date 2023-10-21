@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-export default function DeviceForm({ onAddDevice }) {
+export default function DeviceForm({ onAddDevice, btnText = 'Add device' }) {
   const [title, setTitle] = useState('');
   const [brand, setBrand] = useState('');
   const [price, setPrice] = useState('');
@@ -87,7 +87,7 @@ export default function DeviceForm({ onAddDevice }) {
           />
         </label>
         <br />
-        <button type="submit">Add device</button>
+        <button type="submit">{btnText}</button>
       </form>
     </div>
   );

@@ -9,124 +9,35 @@ import {
   deleteDevice,
   toggleFavouriteDevice,
 } from 'redux/deviceSlice';
-
-const devicesData = [
-  {
-    id: 1,
-    title: 'Smartphone',
-    brand: 'Apple',
-    price: 999.99,
-    type: 'Mobile',
-    coverImage: imgDevice,
-    isFavorite: false,
-  },
-  {
-    id: 2,
-    title: 'Laptop',
-    brand: 'Dell',
-    price: 1299.99,
-    type: 'Computer',
-    coverImage: imgDevice,
-    isFavorite: true,
-  },
-  {
-    id: 3,
-    title: 'Smartwatch',
-    brand: 'Samsung',
-    price: 249.99,
-    type: 'Wearable',
-    coverImage: imgDevice,
-    isFavorite: true,
-  },
-  {
-    id: 4,
-    title: 'Tablet',
-    brand: 'Amazon',
-    price: 199.99,
-    type: 'Mobile',
-    coverImage: imgDevice,
-    isFavorite: false,
-  },
-  {
-    id: 5,
-    title: 'TV',
-    brand: 'Sony',
-    price: 799.99,
-    type: 'Electronics',
-    coverImage: imgDevice,
-    isFavorite: false,
-  },
-  {
-    id: 6,
-    title: 'Gaming Console',
-    brand: 'Microsoft',
-    price: 399.99,
-    type: 'Gaming',
-    coverImage: imgDevice,
-    isFavorite: false,
-  },
-  {
-    id: 7,
-    title: 'Camera',
-    brand: 'Canon',
-    price: 599.99,
-    type: 'Photography',
-    coverImage: imgDevice,
-    isFavorite: false,
-  },
-  {
-    id: 8,
-    title: 'Headphones',
-    brand: 'Sony',
-    price: 149.99,
-    type: 'Audio',
-    coverImage: imgDevice,
-    isFavorite: false,
-  },
-  {
-    id: 9,
-    title: 'Router',
-    brand: 'Linksys',
-    price: 79.99,
-    type: 'Networking',
-    coverImage: imgDevice,
-    isFavorite: false,
-  },
-  {
-    id: 10,
-    title: 'Fitness Tracker',
-    brand: 'Fitbit',
-    price: 79.99,
-    type: 'Wearable',
-    coverImage: imgDevice,
-    isFavorite: true,
-  },
-];
+import { closeModal, openModal } from 'redux/modalSlice';
 
 export function App() {
   const dispatch = useDispatch();
 
   const devices = useSelector(store => store.devices.devices);
   const filter = useSelector(store => store.devices.filter);
+  const modal = useSelector(store => store.modal);
   // const [devices, setDevices] = useState(devicesData);
   // const [filter, setFilter] = useState('');
-  const [modal, setModal] = useState({
-    isOpen: false,
-    modalData: null,
-  });
+  // const [modal, setModal] = useState({
+  //   isOpen: false,
+  //   modalData: null,
+  // });
 
   const onOpenModal = modalData => {
-    setModal({
-      isOpen: true,
-      modalData: modalData,
-    });
+    // setModal({
+    //   isOpen: true,
+    //   modalData: modalData,
+    // });
+    dispatch(openModal(modalData));
   };
 
   const onCloseModal = () => {
-    setModal({
-      isOpen: false,
-      modalData: null,
-    });
+    // setModal({
+    //   isOpen: false,
+    //   modalData: null,
+    // });
+    dispatch(closeModal());
   };
 
   const onDeleteDevice = id => {
