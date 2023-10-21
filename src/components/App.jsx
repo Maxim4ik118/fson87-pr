@@ -3,6 +3,12 @@ import DevicesList from './DevicesList/DevicesList';
 import { useState } from 'react';
 import DeviceForm from './DeviceForm/DeviceForm';
 import Modal from './Modal/Modal';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  addDevice,
+  deleteDevice,
+  toggleFavouriteDevice,
+} from 'redux/deviceSlice';
 
 const devicesData = [
   {
@@ -98,68 +104,76 @@ const devicesData = [
 ];
 
 export function App() {
-  const [devices, setDevices] = useState(devicesData);
-  const [filter, setFilter] = useState('');
+  const dispatch = useDispatch();
+
+  const devices = useSelector(store => store.devices.devices);
+  const filter = useSelector(store => store.devices.filter);
+  // const [devices, setDevices] = useState(devicesData);
+  // const [filter, setFilter] = useState('');
   const [modal, setModal] = useState({
     isOpen: false,
     modalData: null,
   });
 
-  const onOpenModal = (modalData) => {
+  const onOpenModal = modalData => {
     setModal({
       isOpen: true,
       modalData: modalData,
     });
-  }
+  };
 
-  const onCloseModal = () => { 
+  const onCloseModal = () => {
     setModal({
       isOpen: false,
-    modalData: null
-    })
-  }
+      modalData: null,
+    });
+  };
 
   const onDeleteDevice = id => {
-    setDevices(devices.filter(device => device.id !== id));
+    dispatch(deleteDevice(id));
+    // setDevices(devices.filter(device => device.id !== id));
   };
 
   const onAddDevice = data => {
     if (devices.some(({ title }) => data.title === title))
       return alert('This device have already been added');
-    console.log(data);
     const newDevice = {
       ...data,
       coverImage: imgDevice,
       id: new Date().getMilliseconds(),
     };
 
-    setDevices([...devices, newDevice]);
+    dispatch(addDevice(newDevice));
+    // setDevices([...devices, newDevice]);
   };
 
   const onInputChange = event => {
-    setFilter(event.target.value);
+    // setFilter(event.target.value);
   };
 
   const toggleFavorite = id => {
+    dispatch(toggleFavouriteDevice(id));
     // console.log(id);
-    setDevices(
-      devices.map(device => {
-        if (device.id === id) {
-          return {
-            ...device,
-            isFavorite: !device.isFavorite,
-          };
-        }
-        return device;
-      })
-    );
+    // setDevices(
+    //   devices.map(device => {
+    //     if (device.id === id) {
+    //       return {
+    //         ...device,
+    //         isFavorite: !device.isFavorite,
+    //       };
+    //     }
+    //     return device;
+    //   })
+    // );
   };
 
   const filteredDevices = devices.filter(device =>
     device.title.toLowerCase().includes(filter.toLowerCase().trim())
   );
 
-const sortedFilteredDevices = [...filteredDevices].sort((a, b) => b.isFavorite - a.isFavorite)
+  const sortedFilteredDevices = [...filteredDevices].sort(
+    (a, b) => b.isFavorite - a.isFavorite
+  );
 
   return (
     <div>
@@ -175,17 +189,14 @@ const sortedFilteredDevices = [...filteredDevices].sort((a, b) => b.isFavorite -
         />
       </label>
       <DevicesList
-        onOpenModal={ onOpenModal}
+        onOpenModal={onOpenModal}
         devices={sortedFilteredDevices}
         onDeleteDevice={onDeleteDevice}
         toggleFavorite={toggleFavorite}
-
       />
-      {modal.isOpen && <Modal
-        onCloseModal={onCloseModal}
-        modalData={modal.modalData}
-      />}
-
+      {modal.isOpen && (
+        <Modal onCloseModal={onCloseModal} modalData={modal.modalData} />
+      )}
     </div>
   );
 }
